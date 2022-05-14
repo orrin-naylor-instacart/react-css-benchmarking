@@ -1,4 +1,3 @@
-import './Row.css'
 export const Row = ({columns}) => {
 const tdStyles = {
     maxWidth: '384px',
@@ -43,7 +42,7 @@ const tdStyles = {
                 textAlign: "left",
               }}
             >
-              <div style={divStyles} className="row-animation" />
+              <div style={divStyles} />
             </div>
           </td>
         ))}
