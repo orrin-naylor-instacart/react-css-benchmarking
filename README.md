@@ -1,8 +1,8 @@
-#Reduce react render time by half using this one weird trick
+# Reduce react render time by half using this one weird trick
 
 TLDR; Emotion css is doubling our render times. The recommendation, migrate to precomputed styles.
 
-##Background
+## Background
 Some pieces of the ads-web dashboard take over 1 second to render. This has resulted in jank when altering filters, selecting a new chart metric, sorting the data table, and transitioning between loading and loaded states. 
 
 (For non FE folks jank is a short freeze. It happens when the main thread is blocked.)
@@ -17,10 +17,10 @@ Before: Using emotion css prop
 After: Using style prop
 ![Screen Shot 2022-05-12 at 11 35 35 PM](https://user-images.githubusercontent.com/87036318/168660627-14409643-5240-4049-8881-45fc69af5ec3.png)
 
-##Analysis
+## Analysis
 Wanting to make sure this improvement wasn’t some due to some fluke, we decided to profile several css libraries.
 
-##Methodology
+## Methodology
 For 6 frameworks, and a control we did the following
 - Created a mock dashboard that renders a 15 x 20 table, then rerenders it, then removes it, and repeat. We choose this pattern because creating new things, rerendering them, and removing them are common react actions.
 - Rendered an FPS counter on screen. We choses FPS because we wanted to measure how the browser interacted with the framework. If one framework took a little more react render time, but significantly less browser render time it would show up in the data.
@@ -33,7 +33,7 @@ For 6 frameworks, and a control we did the following
 Screenshot of the test rig
 ![Screen Shot 2022-05-14 at 3 36 03 PM](https://user-images.githubusercontent.com/87036318/168660794-f519884b-aa5b-4922-b5fa-885a5eed5d5a.png)
 
-##Results - from worst to best:
+## Results - from worst to best:
 - styled-component, initialized inside the render function - 17 fps
 - - This appeared to create a memory leak, the FPS was recorded at 3 mins, but was steadily dropping. This should be avoided at all costs.
 - emotion css - 77 fps
@@ -45,5 +45,5 @@ Screenshot of the test rig
 - no styles (control) - 318 fps
 ![Screen Shot 2022-05-14 at 5 55 19 PM](https://user-images.githubusercontent.com/87036318/168660912-851c526f-cc20-4042-a306-3870916d78d8.png)
 
-##Conclusion
+## Conclusion
 This document is not intended to propose a migration plan, only to raise awareness. That being said, the recommendation is that Instacart moves from runtime css (emotion, style prop, styled components) to compile time css (regular css or css-modules).
